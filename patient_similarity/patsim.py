@@ -59,11 +59,17 @@ class Patsim:
             resource_types=resource_types,
             path_name="target",
         )
+        target_paths = {
+            "value": target_paths,
+        }
+        if conditional_target_paths:
+            conditional_target_paths = {
+                "value": conditional_target_paths,
+            }
         self._feature_selector._add_single_feature(
-            name=name,
+            feature_name=name,
             target_resource_types=resource_types,
             target_paths=target_paths,
-            target_name="value",
             conditional_target_paths=conditional_target_paths,
         )
 
@@ -80,11 +86,15 @@ class Patsim:
             resource_types=resource_types,
             path_name="value",
         )
+        target_paths = {
+            "value": target_paths,
+        }
+        if conditional_target_paths:
+            conditional_target_paths["value"] = conditional_target_paths
         self._feature_selector._add_single_feature(
-            name=name,
+            feature_name=name,
             target_resource_types=resource_types,
             target_paths=target_paths,
-            target_name="value",
             conditional_target_paths=conditional_target_paths,
         )
 
@@ -117,19 +127,23 @@ class Patsim:
             resource_types=resource_types,
             path_name="system",
         )
-        self._feature_selector._add_single_feature(
-            name=name,
-            target_resource_types=resource_types,
-            target_paths=code_paths,
-            target_name="code",
-            conditional_target_paths=conditional_code_paths,
+        target_paths = {
+            "code": code_paths,
+            "system": system_paths,
+        }
+        conditional_target_paths = {}
+        if conditional_code_paths:
+            conditional_target_paths["code"] = conditional_code_paths
+        if conditional_system_paths:
+            conditional_target_paths["system"] = conditional_system_paths
+        conditional_target_paths = (
+            conditional_target_paths if conditional_target_paths else None
         )
         self._feature_selector._add_single_feature(
-            name=name,
+            feature_name=name,
             target_resource_types=resource_types,
-            target_paths=system_paths,
-            target_name="system",
-            conditional_target_paths=conditional_system_paths,
+            target_paths=target_paths,
+            conditional_target_paths=conditional_target_paths,
         )
 
     def add_coded_numerical_feature(
@@ -161,19 +175,23 @@ class Patsim:
             resource_types=resource_types,
             path_name="system",
         )
-        self._feature_selector._add_single_feature(
-            name=name,
-            target_resource_types=resource_types,
-            target_paths=value_paths,
-            target_name="value",
-            conditional_target_paths=conditional_value_paths,
+        target_paths = {
+            "code": code_paths,
+            "value": value_paths,
+        }
+        conditional_target_paths = {}
+        if conditional_code_paths:
+            conditional_target_paths["code"] = conditional_code_paths
+        if conditional_value_paths:
+            conditional_value_paths["value"] = conditional_value_paths
+        conditional_target_paths = (
+            conditional_target_paths if conditional_target_paths else None
         )
         self._feature_selector._add_single_feature(
-            name=name,
+            feature_name=name,
             target_resource_types=resource_types,
-            target_paths=code_paths,
-            target_name="code",
-            conditional_target_paths=conditional_code_paths,
+            target_paths=target_paths,
+            conditional_target_paths=conditional_target_paths,
         )
 
     def compute_similarities():
