@@ -1,4 +1,4 @@
-#!/Users/tillrostalski/Git/patient_similarity/venv/bin/python
+#!/Users/tillrostalski/Git/fhir_analyzer/venv/bin/python
 # -*- coding: utf-8 -*-
 import re
 import sys
