@@ -18,8 +18,9 @@ def evaluate_cond_fns(resource: dict, fns: list[dict[Callable, Callable]]) -> st
 
 class FeatureSelector:
     def __init__(self, fhirstore: Fhirstore):
-        self._feature_names = []
-        self._patient_features = {}
+        self._feature_names: list[str] = []
+        self._feature_types: dict[str, str] = {}
+        self._patient_features: list[dict[str, list[str]]] = {}
         self._fhirstore = fhirstore
 
     @property
@@ -29,12 +30,13 @@ class FeatureSelector:
     def _add_single_feature(
         self,
         feature_name: str,
+        feature_type: str,
         target_resource_types: list[str],
         target_paths: dict[str, list[str]],
         conditional_target_paths: dict[str, list[dict[str, str]]] = None,
     ):
         if feature_name not in self._feature_names:
-            self._feature_names.append(feature_name)
+            self._add_feature_metadata(feature_name, feature_type)
 
         target_fns = {
             targ_n: [compile(targ_path) for targ_path in targ_paths]
@@ -61,6 +63,10 @@ class FeatureSelector:
             feature_name,
             target_resource_types,
         )
+
+    def _add_feature_metadata(self, feature_name: str, feature_type: str):
+        self._feature_names.append(feature_name)
+        self._feature_types[feature_name] = feature_type
 
     def _process_target_resources(
         self,

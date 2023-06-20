@@ -6,6 +6,13 @@ from fhir_analyzer.constants import (
     default_system_paths,
     default_code_paths,
 )
+from fhir_analyzer.patient_similarity.comparator import Comparator
+from fhir_analyzer.patient_similarity.internal_types import (
+    CATEGORICAL_STRING,
+    CODED_CONCEPT,
+    CODED_NUMERICAL,
+    NUMERICAL,
+)
 
 
 def get_default_target_paths(resource_types: list[str]) -> list[str]:
@@ -44,6 +51,7 @@ class Patsim:
     def __init__(self, fhirstore: Fhirstore = None):
         self._fhirstore = fhirstore if fhirstore else Fhirstore()
         self._feature_selector = FeatureSelector(self._fhirstore)
+        self._comparator = Comparator()
 
     def add_categorical_feature(
         self,
@@ -67,6 +75,7 @@ class Patsim:
             }
         self._feature_selector._add_single_feature(
             feature_name=name,
+            feature_type=CATEGORICAL_STRING,
             target_resource_types=resource_types,
             target_paths=target_paths,
             conditional_target_paths=conditional_target_paths,
@@ -92,6 +101,7 @@ class Patsim:
             conditional_target_paths["value"] = conditional_target_paths
         self._feature_selector._add_single_feature(
             feature_name=name,
+            feature_type=NUMERICAL,
             target_resource_types=resource_types,
             target_paths=target_paths,
             conditional_target_paths=conditional_target_paths,
@@ -140,6 +150,7 @@ class Patsim:
         )
         self._feature_selector._add_single_feature(
             feature_name=name,
+            feature_type=CODED_CONCEPT,
             target_resource_types=resource_types,
             target_paths=target_paths,
             conditional_target_paths=conditional_target_paths,
@@ -188,6 +199,7 @@ class Patsim:
         )
         self._feature_selector._add_single_feature(
             feature_name=name,
+            feature_type=CODED_NUMERICAL,
             target_resource_types=resource_types,
             target_paths=target_paths,
             conditional_target_paths=conditional_target_paths,
@@ -197,8 +209,8 @@ class Patsim:
     def feature_df(self):
         return self._feature_selector.feature_df
 
-    def compute_similarities():
-        pass
+    def compute_similarities(self):
+        self._comparator = Comparator(feature_selector=self._feature_selector)
 
     def add_resources(self, resource: list[dict]):
         self._fhirstore.add_resources(resource)

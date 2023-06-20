@@ -3,8 +3,13 @@ import networkx as nx
 
 from nxontology import NXOntology
 from scipy.stats import norm
+from fhir_analyzer.feature_selector import FeatureSelector
 
 from fhir_analyzer.patient_similarity.internal_types import (
+    CATEGORICAL_STRING,
+    CODED_CONCEPT,
+    CODED_NUMERICAL,
+    NUMERICAL,
     CategoricalString,
     Numerical,
     CodedConcept,
@@ -24,8 +29,14 @@ def load_cc_graph(
 
 
 class Comparator:
-    def __init__(self):
-        pass
+    def __init__(self, feature_selector: FeatureSelector = None):
+        self._feature_selector = feature_selector
+        self._numerical_stats = {}
+        self._coded_numerical_stats = {}
+        self._feature_dic = {}
+        if feature_selector:
+            self._add_type_data()
+        self._parse_features()
 
     def compare_categorical(
         self, feature1: list[CategoricalString], feature2: list[CategoricalString]
@@ -128,3 +139,97 @@ class Comparator:
         ]
 
         return statistics.mean(similarities) if similarities else None
+
+    def _add_type_data(self):
+        for name, type in self._feature_selector._feature_types.items():
+            if type == NUMERICAL:
+                self._add_numerical_type_data(name)
+            elif type == CODED_NUMERICAL:
+                self._add_coded_numerical_type_data(name)
+
+    def _add_numerical_type_data(self, name):
+        values = []
+        numerical_stats = {}
+        for _, features_dic in self._feature_selector._patient_features:
+            for name, features in features_dic.items():
+                if name == name:
+                    for feature in features:
+                        values.append(feature["value"])
+        min_value = min(values)
+        max_value = max(values)
+        if name not in numerical_stats:
+            numerical_stats[name] = {
+                "min_value": min_value,
+                "max_value": max_value,
+            }
+        self._numerical_stats.update(numerical_stats)
+
+    def _add_coded_numerical_type_data(self):
+        code_stats = {}
+        code_values = {}
+        for _, features_dic in self._feature_selector._patient_features:
+            for name, features in features_dic.items():
+                if name == name:
+                    for feature in features:
+                        code = feature["code"]
+                        value = feature["value"]
+                        if code not in code_values:
+                            code_values[code] = []
+                        code_values[code].append(value)
+
+        for code, values in code_values.items():
+            code_stats[code] = {
+                "mean": statistics.mean(values),
+                "std_dev": statistics.stdev(values),
+            }
+        self._coded_numerical_stats.update(code_stats)
+
+    def _parse_features(self):
+        updated_feature_dic = {}
+        for patient_id, features_dic in self._feature_selector._patient_features.items():
+            parsed_features = []
+            for name, features in features_dic.items():
+                if name not in self._feature_dic:
+                    self._feature_dic[name] = []
+                if self._feature_selector._feature_types[name] == NUMERICAL:
+                    parsed_features = [
+                        Numerical(
+                            value=feature["value"],
+                            min_value=self._numerical_stats[name]["min_value"],
+                            max_value=self._numerical_stats[name]["max_value"],
+                        )
+                        for feature in features
+                    ]
+                elif self._feature_selector._feature_types[name] == CODED_NUMERICAL:
+                    parsed_features = [
+                        CodedNumerical(
+                            code=feature["code"],
+                            value=feature["value"],
+                            code_mean=self._coded_numerical_stats[feature["code"]][
+                                "mean"
+                            ],
+                            code_std_dev=self._coded_numerical_stats[feature["code"]][
+                                "std_dev"
+                            ],
+                            is_abnormal=feature["is_abnormal"],
+                        )
+                        for feature in features
+                    ]
+                elif self._feature_selector._feature_types[name] == CODED_CONCEPT:
+                    parsed_features = [
+                        CodedConcept(
+                            code=feature["code"],
+                            system=feature["system"],
+                        )
+                        for feature in features
+                    ]
+                elif self._feature_selector._feature_types[name] == CATEGORICAL_STRING:
+                    parsed_features = [
+                        CategoricalString(
+                            value=feature["value"],
+                        )
+                        for feature in features
+                    ]
+            updated_feature_dic[patient_id] = {}
+            updated_feature_dic[patient_id][name] = parsed_features
+        self._feature_dic.update(updated_feature_dic)

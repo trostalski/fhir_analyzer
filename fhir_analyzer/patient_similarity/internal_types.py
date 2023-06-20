@@ -1,5 +1,10 @@
 from dataclasses import dataclass
 
+CODED_CONCEPT = "coded_concept"
+CATEGORICAL_STRING = "categorical_string"
+NUMERICAL = "numerical"
+CODED_NUMERICAL = "coded_numerical"
+
 
 @dataclass
 class CodedConcept:
