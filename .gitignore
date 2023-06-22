@@ -1,2 +1,4 @@
 tmp.*
+venv/
 nx_graphs/
+__pycache__/
