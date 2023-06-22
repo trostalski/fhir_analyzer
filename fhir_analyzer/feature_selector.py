@@ -82,6 +82,8 @@ class FeatureSelector:
             patient_resources,
         ) in self._fhirstore._patient_connections.items():
             self._patient_features.setdefault(patient_id, {})
+            if feature_name not in self._patient_features[patient_id]:
+                self._patient_features[patient_id][feature_name] = []
             for resource_type in target_resource_types:
                 if resource_type in patient_resources:
                     for resource in patient_resources[resource_type]:
@@ -106,6 +108,8 @@ class FeatureSelector:
                 temp_target = self._evaluate_target_functions(resource, targ_fns)
                 if temp_target:
                     target[targ_n] = temp_target
+                else:
+                    target[targ_n] = None
         return target
 
     def _evaluate_conditional_functions(
@@ -115,20 +119,22 @@ class FeatureSelector:
     ):
         for cond_fn, targ_fn in conditional_fns:
             if cond_fn(resource):
-                return targ_fn(resource)
+                return targ_fn(resource)[0]
         return None
 
     def _evaluate_target_functions(
         self, resource: Any, target_fns: list[Callable[[Any], Any]]
     ):
         for target_fn in target_fns:
-            target = target_fn(resource)
+            if not len(target_fn(resource)) > 0:
+                continue
+            target = target_fn(resource)[0]
             if target:
                 return target
         return None
 
     def _update_patient_features(self, patient_id: str, feature_name: str, target: Any):
-        if feature_name not in self._patient_features[patient_id]:
-            self._patient_features[patient_id][feature_name] = []
         if target:
             self._patient_features[patient_id][feature_name].append(target)
+        else:
+            self._patient_features[patient_id][feature_name].append(None)

@@ -51,7 +51,6 @@ class Patsim:
     def __init__(self, fhirstore: Fhirstore = None):
         self._fhirstore = fhirstore if fhirstore else Fhirstore()
         self._feature_selector = FeatureSelector(self._fhirstore)
-        self._comparator = Comparator()
 
     def add_categorical_feature(
         self,
@@ -209,8 +208,9 @@ class Patsim:
     def feature_df(self):
         return self._feature_selector.feature_df
 
-    def compute_similarities(self):
+    def compute_similarities(self, *args, **kwargs):
         self._comparator = Comparator(feature_selector=self._feature_selector)
+        return self._comparator._compute_similarities()
 
     def add_resources(self, resource: list[dict]):
         self._fhirstore.add_resources(resource)
