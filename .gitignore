@@ -4,3 +4,5 @@ nx_graphs/
 __pycache__/
 .DS_Store
 .ipynb_checkpoints/
+*.egg-info/
+dist/
