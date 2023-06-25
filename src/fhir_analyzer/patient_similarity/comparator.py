@@ -220,7 +220,7 @@ class Comparator:
                         if value:
                             code_values[code].append(value)
         for code, values in code_values.items():
-            if code and values:
+            if code and len(values) > 1:
                 code_stats[name][code] = {
                     "mean": statistics.mean(values),
                     "std_dev": statistics.stdev(values),
@@ -298,7 +298,7 @@ class Comparator:
                 updated_feature_dic[patient_id].update({name: parsed_features})
         self._feature_dict.update(updated_feature_dic)
 
-    def _compute_similarities(self):
+    def _compute_similarities(self, output_dict=False):
         sim_df_data = {}
         result_dict = {}
         for patient_id1, feature_dic1 in self._feature_dict.items():
@@ -318,7 +318,10 @@ class Comparator:
                             features, feature_dic2[feat_name]
                         )
         for feat_name, data in sim_df_data.items():
-            result_dict.update({feat_name: pd.DataFrame(data)})
+            if output_dict:
+                result_dict.update({feat_name: data})
+            else:
+                result_dict.update({feat_name: pd.DataFrame(data)})
         return result_dict
 
     def _resolve_system(self, system: str):

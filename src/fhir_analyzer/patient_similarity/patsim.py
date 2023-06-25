@@ -52,6 +52,18 @@ class Patsim:
         self._fhirstore = fhirstore if fhirstore else Fhirstore()
         self._feature_selector = FeatureSelector(self._fhirstore)
 
+    def add_feature(self, type: str, *args, **kwargs):
+        if type == CATEGORICAL_STRING:
+            self.add_categorical_feature(*args, **kwargs)
+        elif type == CODED_CONCEPT:
+            self.add_coded_concept_feature(*args, **kwargs)
+        elif type == CODED_NUMERICAL:
+            self.add_coded_numerical_feature(*args, **kwargs)
+        elif type == NUMERICAL:
+            self.add_numerical_feature(*args, **kwargs)
+        else:
+            raise ValueError(f"Invalid feature type: {type}")
+
     def add_categorical_feature(
         self,
         name: str,
@@ -228,9 +240,9 @@ class Patsim:
     def feature_df(self):
         return self._feature_selector.feature_df
 
-    def compute_similarities(self, *args, **kwargs):
+    def compute_similarities(self, output_dict: bool = False):
         self._comparator = Comparator(feature_selector=self._feature_selector)
-        return self._comparator._compute_similarities()
+        return self._comparator._compute_similarities(output_dict=output_dict)
 
     def add_resources(self, resource: list[dict]):
         self._fhirstore.add_resources(resource)
