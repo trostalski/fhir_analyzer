@@ -1,6 +1,7 @@
 import pickle
 import statistics
 import re
+import pkg_resources
 
 
 from nxontology import NXOntology
@@ -28,18 +29,18 @@ RXNORM = "RxNorm"
 UCUM = "UCUM"
 ICD9 = "ICD-9"
 
-GRAPHS_DIR = "patient_similarity/nx_graphs"
 SNOMED_GRAPH_NAME = "snomed_cc_graph.adjlist"
 ICD10_GRAPH_NAME = "icd10_cc_graph.gpickle"
 
 
 def load_nx_graph(
     name: str,
-    dir: str = GRAPHS_DIR,
 ):
-    # G = nx.read_adjlist(f"{dir}/{name}.adjlist")
-    with open(f"{dir}/{name}.gpickle", "rb") as f:
-        G = pickle.load(f)
+    G = pickle.load(
+        pkg_resources.resource_stream(
+            "fhir_analyzer.patient_similarity", f"nx_graphs/{name}.gpickle"
+        )
+    )
     G = NXOntology(G)
     G.freeze()
     print(

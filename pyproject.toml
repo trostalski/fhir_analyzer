@@ -21,5 +21,11 @@ dynamic = ["dependencies"]
 [tool.setuptools.dynamic]
 dependencies = {file = ["requirements.txt"]}
 
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
 [project.urls]
 "Homepage" = "https://github.com/trostalski/fhir_analyzer"
