@@ -59,6 +59,10 @@ class Patsim:
         target_paths: list[str] | str | None = None,
         conditional_target_paths: list[dict[str, str]] | dict[str, str] | None = None,
     ):
+        if isinstance(resource_types, str):
+            resource_types = [resource_types]
+        if isinstance(target_paths, str):
+            target_paths = [target_paths]
         validate_paths(
             paths=target_paths,
             default_fn=get_default_target_paths,
@@ -87,6 +91,10 @@ class Patsim:
         target_paths: list[str] | str | None = None,
         conditional_target_paths: list[dict[str, str]] | dict[str, str] | None = None,
     ):
+        if isinstance(resource_types, str):
+            resource_types = [resource_types]
+        if isinstance(target_paths, str):
+            target_paths = [target_paths]
         validate_paths(
             paths=target_paths,
             default_fn=get_default_target_paths,
@@ -115,6 +123,12 @@ class Patsim:
         conditional_code_paths: list[dict[str, str]] | dict[str, str] | None = None,
         conditional_system_paths: list[dict[str, str]] | dict[str, str] | None = None,
     ):
+        if isinstance(resource_types, str):
+            resource_types = [resource_types]
+        if isinstance(code_paths, str):
+            code_paths = [code_paths]
+        if isinstance(system_paths, str):
+            system_paths = [system_paths]
         code_paths = (
             get_default_code_paths(resource_types) if not code_paths else code_paths
         )
@@ -164,6 +178,12 @@ class Patsim:
         conditional_value_paths: list[dict[str, str]] | dict[str, str] | None = None,
         conditional_code_paths: list[dict[str, str]] | dict[str, str] | None = None,
     ):
+        if isinstance(resource_types, str):
+            resource_types = [resource_types]
+        if isinstance(code_paths, str):
+            code_paths = [code_paths]
+        if isinstance(value_paths, str):
+            value_paths = [value_paths]
         code_paths = (
             get_default_code_paths(resource_types) if not code_paths else code_paths
         )

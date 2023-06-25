@@ -28,24 +28,23 @@ RXNORM = "RxNorm"
 UCUM = "UCUM"
 ICD9 = "ICD-9"
 
-GRAPH_PATH = "fhir_analyzer/patient_similarity/cc_graphs/cc_graph.gpickle"
-SNOMED_GRAPH_NAME = "snomed_cc_graph.gpickle"
+GRAPHS_DIR = "patient_similarity/nx_graphs"
+SNOMED_GRAPH_NAME = "snomed_cc_graph.adjlist"
 ICD10_GRAPH_NAME = "icd10_cc_graph.gpickle"
 
 
 def load_nx_graph(
     name: str,
-    dir: str = "patient_similarity/nx_graphs",
+    dir: str = GRAPHS_DIR,
 ):
-    import os
-
+    # G = nx.read_adjlist(f"{dir}/{name}.adjlist")
     with open(f"{dir}/{name}.gpickle", "rb") as f:
         G = pickle.load(f)
-        G = NXOntology(G)
-        G.freeze()
-        print(
-            f"Loaded {name} graph with {len(G.graph.nodes)} nodes and {len(G.graph.edges)} edges."
-        )
+    G = NXOntology(G)
+    G.freeze()
+    print(
+        f"Loaded {name} graph with {len(G.graph.nodes)} nodes and {len(G.graph.edges)} edges."
+    )
     return G
 
 
@@ -97,7 +96,7 @@ class Comparator:
         if len(feature1) == 0 or len(feature2) == 0:
             return None
         system = feature1[0].system
-        system = self._resolve_system(system)
+        system = self._resolve_system(system=system)
 
         node_sim_ab = self.calculate_node_similarities(
             feature1, feature2, system, ic_metric, cs_metric
@@ -243,6 +242,7 @@ class Comparator:
                             value=feature["value"],
                             min_value=self._numerical_stats[name]["min_value"],
                             max_value=self._numerical_stats[name]["max_value"],
+                            feature_name=name,
                         )
                         for feature in features
                         if feature["value"] is not None
@@ -263,6 +263,7 @@ class Comparator:
                             is_abnormal=feature["is_abnormal"]
                             if "is_abnormal" in feature
                             else True,
+                            feature_name=name,
                         )
                         for feature in features
                         if feature["value"] is not None
@@ -279,6 +280,7 @@ class Comparator:
                         CodedConcept(
                             code=feature["code"],
                             system=feature["system"],
+                            feature_name=name,
                         )
                         for feature in features
                         if feature["code"] is not None and feature["system"] is not None
@@ -287,6 +289,7 @@ class Comparator:
                     parsed_features = [
                         CategoricalString(
                             value=feature["value"],
+                            feature_name=name,
                         )
                         for feature in features
                         if feature["value"] is not None
@@ -336,5 +339,5 @@ class Comparator:
         else:
             raise ValueError(f"Unknown system: {resolved_system}")
         if resolved_system not in self._nx_graphs:
-            self._nx_graphs[resolved_system] = load_nx_graph(resolved_system)
+            self._nx_graphs[resolved_system] = load_nx_graph(name=resolved_system)
         return resolved_system

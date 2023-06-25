@@ -7,10 +7,11 @@ CODED_NUMERICAL = "coded_numerical"
 
 
 class CodedConcept:
-    code: str
-    system: str
-
-    def __init__(self, code: str, system: str):
+    def __init__(self, code: str, system: str, feature_name: str):
+        if not isinstance(code, str):
+            raise ValueError(
+                f"Feature code for {feature_name} expected str, got {type(code)}: {code}"
+            )
         self.code = code
         self.system = system
 
@@ -19,9 +20,11 @@ class CodedConcept:
 
 
 class CategoricalString:
-    value: str
-
-    def __init__(self, value: str):
+    def __init__(self, value: str, feature_name: str):
+        if not isinstance(value, str):
+            raise ValueError(
+                f"Feature value for {feature_name} expected str, got {type(value)}: {value}"
+            )
         self.value = value
 
     def __str__(self):
@@ -29,11 +32,13 @@ class CategoricalString:
 
 
 class Numerical:
-    value: float
-    max_value: float
-    min_value: float
-
-    def __init__(self, value: float, max_value: float, min_value: float):
+    def __init__(
+        self, value: float, max_value: float, min_value: float, feature_name: str
+    ):
+        if not isinstance(value, float):
+            raise ValueError(
+                f"Feature value for {feature_name} expected float, got {type(value)}: {value}"
+            )
         self.value = value
         self.max_value = max_value
         self.min_value = min_value
@@ -43,20 +48,23 @@ class Numerical:
 
 
 class CodedNumerical:
-    value: float
-    code: str
-    is_abnormal: bool
-    code_mean: float
-    code_std_dev: float
-
     def __init__(
         self,
         value: float,
         code: str,
         code_mean: float,
         code_std_dev: float,
-        is_abnormal: bool,
+        feature_name: str,
+        is_abnormal: bool | None = None,
     ):
+        if not isinstance(value, float):
+            raise ValueError(
+                f"Feature value for {feature_name} expected float, got {type(value)}: {value}"
+            )
+        if not isinstance(code, str):
+            raise ValueError(
+                f"Feature code for {feature_name} expected str, got {type(code)}: {code}"
+            )
         is_abnormal = is_abnormal if is_abnormal is not None else True
         self.value = value
         self.code = code
