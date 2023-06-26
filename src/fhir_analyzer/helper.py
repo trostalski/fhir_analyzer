@@ -28,8 +28,9 @@ def gather_references_for_resource(resource: dict) -> list[Reference]:
     for reference in get_references_generator(resource):
         new_reference = reference
         if is_absolute_or_relative_ref(reference.reference):
-            new_reference.reference = reference.reference.split("/")[-1]
-            new_reference.type = reference.reference.split("/")[-2]
+            reference_parts = reference.reference.split("/")
+            new_reference.reference = reference_parts[-1]
+            new_reference.type = reference_parts[-2]
         elif is_uuid(reference.reference):
             new_reference.reference = get_id_from_uuid(reference.reference)
         result.append(new_reference)
