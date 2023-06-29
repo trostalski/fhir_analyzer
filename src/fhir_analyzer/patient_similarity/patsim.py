@@ -1,3 +1,4 @@
+from typing import Union
 from fhir_analyzer.feature_selector import FeatureSelector
 
 from fhir_analyzer.fhirstore import Fhirstore
@@ -67,9 +68,11 @@ class Patsim:
     def add_categorical_feature(
         self,
         name: str,
-        resource_types: list[str] | str,
-        target_paths: list[str] | str | None = None,
-        conditional_target_paths: list[dict[str, str]] | dict[str, str] | None = None,
+        resource_types: Union[list[str], str],
+        target_paths: Union[list[str], str, None] = None,
+        conditional_target_paths: Union[
+            list[dict[str, str]], dict[str, str], None
+        ] = None,
     ):
         if isinstance(resource_types, str):
             resource_types = [resource_types]
@@ -99,9 +102,11 @@ class Patsim:
     def add_numerical_feature(
         self,
         name: str,
-        resource_types: list[str] | str,
-        target_paths: list[str] | str | None = None,
-        conditional_target_paths: list[dict[str, str]] | dict[str, str] | None = None,
+        resource_types: Union[list[str], str],
+        target_paths: Union[list[str], str, None] = None,
+        conditional_target_paths: Union[
+            list[dict[str, str]], dict[str, str], None
+        ] = None,
     ):
         if isinstance(resource_types, str):
             resource_types = [resource_types]
@@ -129,11 +134,15 @@ class Patsim:
     def add_coded_concept_feature(
         self,
         name: str,
-        resource_types: list[str] | str,
-        code_paths: list[str] | str | None = None,
-        system_paths: list[str] | str | None = None,
-        conditional_code_paths: list[dict[str, str]] | dict[str, str] | None = None,
-        conditional_system_paths: list[dict[str, str]] | dict[str, str] | None = None,
+        resource_types: Union[list[str], str],
+        code_paths: Union[list[str], str, None] = None,
+        system_paths: Union[list[str], str, None] = None,
+        conditional_code_paths: Union[
+            list[dict[str, str]], dict[str, str], None
+        ] = None,
+        conditional_system_paths: Union[
+            list[dict[str, str]], dict[str, str], None
+        ] = None,
     ):
         if isinstance(resource_types, str):
             resource_types = [resource_types]
@@ -184,11 +193,15 @@ class Patsim:
     def add_coded_numerical_feature(
         self,
         name: str,
-        resource_types: list[str] | str,
-        value_paths: list[str] | str | None = None,
-        code_paths: list[str] | str | None = None,
-        conditional_value_paths: list[dict[str, str]] | dict[str, str] | None = None,
-        conditional_code_paths: list[dict[str, str]] | dict[str, str] | None = None,
+        resource_types: Union[list[str], str],
+        value_paths: Union[list[str], str, None] = None,
+        code_paths: Union[list[str], str, None] = None,
+        conditional_value_paths: Union[
+            list[dict[str, str]], dict[str, str], None
+        ] = None,
+        conditional_code_paths: Union[
+            list[dict[str, str]], dict[str, str], None
+        ] = None,
     ):
         if isinstance(resource_types, str):
             resource_types = [resource_types]

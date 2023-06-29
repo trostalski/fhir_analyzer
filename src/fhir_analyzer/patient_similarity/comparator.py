@@ -7,9 +7,9 @@ import pkg_resources
 from nxontology import NXOntology
 import networkx as nx
 import pandas as pd
-from scipy.stats import norm
 
 from fhir_analyzer.feature_selector import FeatureSelector
+from fhir_analyzer.helper import cdf
 
 from fhir_analyzer.patient_similarity.internal_types import (
     CATEGORICAL_STRING,
@@ -154,8 +154,8 @@ class Comparator:
             value1 = float(feature1.value)
             value2 = float(feature2.value)
 
-            p1 = norm.cdf((value1 - mean) / std)
-            p2 = norm.cdf((value2 - mean) / std)
+            p1 = cdf((value1 - mean) / std)
+            p2 = cdf((value2 - mean) / std)
 
             similarity = 1 - abs(p1 - p2)
 

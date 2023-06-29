@@ -1,4 +1,4 @@
-from typing import Any, Callable
+from typing import Any, Callable, Union
 
 from fhirpathpy import compile
 import pandas as pd
@@ -93,9 +93,11 @@ class FeatureSelector:
     def _get_target(
         self,
         resource: Any,
-        target_fns: list[Callable[[Any], Any]] | dict[str, Callable[[Any], Any]],
-        conditional_fns: list[tuple[Callable[[Any], bool], Callable[[Any], Any]]]
-        | dict[str, tuple[Callable[[Any], bool], Callable[[Any], Any]]],
+        target_fns: Union[list[Callable[[Any], Any]], dict[str, Callable[[Any], Any]]],
+        conditional_fns: Union[
+            list[tuple[Callable[[Any], bool], Callable[[Any], Any]]],
+            dict[str, tuple[Callable[[Any], bool], Callable[[Any], Any]]],
+        ],
     ):
         target = {}
         if conditional_fns:

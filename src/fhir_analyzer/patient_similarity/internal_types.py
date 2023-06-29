@@ -1,4 +1,5 @@
-from dataclasses import dataclass
+from typing import Union
+
 
 CODED_CONCEPT = "coded_concept"
 CATEGORICAL_STRING = "categorical_string"
@@ -55,7 +56,7 @@ class CodedNumerical:
         code_mean: float,
         code_std_dev: float,
         feature_name: str,
-        is_abnormal: bool | None = None,
+        is_abnormal: Union[bool, None] = None,
     ):
         if not isinstance(value, float):
             raise ValueError(

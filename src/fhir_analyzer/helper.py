@@ -1,3 +1,4 @@
+import math
 from typing import Generator, Iterable
 from urllib.parse import urlparse
 from uuid import UUID
@@ -65,3 +66,12 @@ def get_id_from_uuid(uuid: str) -> str:
 def inputs_to_lists(*args):
     """Converts all inputs to lists"""
     return tuple([arg if isinstance(arg, list) else [arg] for arg in args])
+
+
+def cdf(x, mean, std):
+    # Compute the z-score
+    z = (x - mean) / std
+
+    # Compute the cumulative frequency score
+    cdf = 0.5 * (1 + math.erf(z / math.sqrt(2)))
+    return cdf
