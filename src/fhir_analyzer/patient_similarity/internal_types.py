@@ -15,6 +15,7 @@ class CodedConcept:
             )
         self.code = code
         self.system = system
+        self.feature_name = feature_name
 
     def __str__(self):
         return f"CodedConcept({self.code}, {self.system})"
@@ -27,6 +28,7 @@ class CategoricalString:
                 f"Feature value for {feature_name} expected str, got {type(value)}: {value}"
             )
         self.value = value
+        self.feature_name = feature_name
 
     def __str__(self):
         return f"CategoricalString({self.value})"
@@ -43,6 +45,7 @@ class Numerical:
         self.value = value
         self.max_value = max_value
         self.min_value = min_value
+        self.feature_name = feature_name
 
     def __str__(self):
         return f"Numerical({self.value}, {self.max_value}, {self.min_value})"
@@ -72,6 +75,7 @@ class CodedNumerical:
         self.code_mean = code_mean
         self.code_std_dev = code_std_dev
         self.is_abnormal = is_abnormal
+        self.feature_name = feature_name
 
     def __str__(self):
         return f"CodedNumerical({self.value}, {self.code}, {self.code_mean}, {self.code_std_dev}, {self.is_abnormal})"

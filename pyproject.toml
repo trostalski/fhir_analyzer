@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "fhir_analyzer"
-version = "0.0.4"
+version = "0.0.5"
 authors = [{ name = "Till Rostalski", email = "tillrostalski@gmail.com" }]
 description = "A small FHIR package"
 readme = "README.md"
@@ -16,7 +16,6 @@ classifiers = [
 ]
 dependencies = [
   "fhir.resources",
-  "pydantic",
   "pandas",
   "fhirpathpy",
   "networkx",
