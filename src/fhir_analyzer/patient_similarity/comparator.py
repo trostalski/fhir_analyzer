@@ -79,12 +79,20 @@ class Comparator:
 
     def compare_numerical(self, feature1: list[Numerical], feature2: list[Numerical]):
         """Compute the mean euclidean distance between two numerical features."""
-        if len(feature1) != 1 or len(feature2) != 1:
+        if not feature1 or not feature2:
             return None
-        feature1 = feature1[0]
-        feature2 = feature2[0]
-        nom = abs(feature1.value - feature2.value) - feature1.min_value
-        denom = feature1.max_value - feature1.min_value
+        min_value = feature1[0].min_value
+        max_value = feature1[0].max_value
+        if len(feature1) > 1:
+            value1 = statistics.mean([i.value for i in feature1])
+        else:
+            value1 = feature1[0].value
+        if len(feature2) > 1:
+            value2 = statistics.mean([i.value for i in feature2])
+        else:
+            value2 = feature2[0].value
+        nom = abs(value1 - value2) - min_value
+        denom = max_value - min_value
         return 1 - (nom / denom)
 
     def compare_coded_concepts(
@@ -148,14 +156,17 @@ class Comparator:
             mean = float(feature1.code_mean)
             std = float(feature1.code_std_dev)
 
+            if not mean or not std:
+                return None
+
             if std == 0:
                 return None
 
             value1 = float(feature1.value)
             value2 = float(feature2.value)
 
-            p1 = cdf((value1 - mean) / std)
-            p2 = cdf((value2 - mean) / std)
+            p1 = cdf((value1 - mean) / std, mean, std)
+            p2 = cdf((value2 - mean) / std, mean, std)
 
             similarity = 1 - abs(p1 - p2)
 
@@ -199,11 +210,12 @@ class Comparator:
         if values:
             min_value = min(values)
             max_value = max(values)
-            if name not in numerical_stats:
-                numerical_stats[name] = {
+            numerical_stats[name].update(
+                {
                     "min_value": min_value,
                     "max_value": max_value,
                 }
+            )
         self._numerical_stats.update(numerical_stats)
 
     def _add_coded_numerical_type_data(self, name):
@@ -218,6 +230,7 @@ class Comparator:
                         if code not in code_values:
                             code_values[code] = []
                         if value:
+                            value = float(value)
                             code_values[code].append(value)
         for code, values in code_values.items():
             if code and len(values) > 1:
@@ -240,7 +253,7 @@ class Comparator:
                 if self._feature_selector._feature_types[name] == NUMERICAL:
                     parsed_features = [
                         Numerical(
-                            value=feature["value"],
+                            value=float(feature["value"]),
                             min_value=self._numerical_stats[name]["min_value"],
                             max_value=self._numerical_stats[name]["max_value"],
                             feature_name=name,

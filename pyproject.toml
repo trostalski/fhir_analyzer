@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "fhir_analyzer"
-version = "0.0.5"
+version = "0.0.6"
 authors = [{ name = "Till Rostalski", email = "tillrostalski@gmail.com" }]
 description = "A small FHIR package"
 readme = "README.md"

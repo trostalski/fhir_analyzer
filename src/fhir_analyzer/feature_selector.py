@@ -138,5 +138,3 @@ class FeatureSelector:
     def _update_patient_features(self, patient_id: str, feature_name: str, target: Any):
         if target:
             self._patient_features[patient_id][feature_name].append(target)
-        else:
-            self._patient_features[patient_id][feature_name].append(None)

@@ -9,10 +9,6 @@ CODED_NUMERICAL = "coded_numerical"
 
 class CodedConcept:
     def __init__(self, code: str, system: str, feature_name: str):
-        if not isinstance(code, str):
-            raise ValueError(
-                f"Feature code for {feature_name} expected str, got {type(code)}: {code}"
-            )
         self.code = code
         self.system = system
         self.feature_name = feature_name
@@ -23,10 +19,6 @@ class CodedConcept:
 
 class CategoricalString:
     def __init__(self, value: str, feature_name: str):
-        if not isinstance(value, str):
-            raise ValueError(
-                f"Feature value for {feature_name} expected str, got {type(value)}: {value}"
-            )
         self.value = value
         self.feature_name = feature_name
 
@@ -38,10 +30,6 @@ class Numerical:
     def __init__(
         self, value: float, max_value: float, min_value: float, feature_name: str
     ):
-        if not isinstance(value, float):
-            raise ValueError(
-                f"Feature value for {feature_name} expected float, got {type(value)}: {value}"
-            )
         self.value = value
         self.max_value = max_value
         self.min_value = min_value
@@ -61,14 +49,6 @@ class CodedNumerical:
         feature_name: str,
         is_abnormal: Union[bool, None] = None,
     ):
-        if not isinstance(value, float):
-            raise ValueError(
-                f"Feature value for {feature_name} expected float, got {type(value)}: {value}"
-            )
-        if not isinstance(code, str):
-            raise ValueError(
-                f"Feature code for {feature_name} expected str, got {type(code)}: {code}"
-            )
         is_abnormal = is_abnormal if is_abnormal is not None else True
         self.value = value
         self.code = code
