@@ -16,7 +16,6 @@ class Fhirstore:
             self._update_patient_dicts(self._resources)
 
     def _update_patient_dicts(self, resources: list[dict]):
-        """resources should not exists already"""
         for resource in resources:
             resource_id = resource["id"]
             resource_type = resource.get("resourceType", None)
@@ -58,6 +57,9 @@ class Fhirstore:
         self.validate_resources_input(resources)
         self._resources += resources
         self._update_patient_dicts(resources)
+
+    def add_feature(self):
+        pass
 
     def _resource_exists(self, resource: dict) -> bool:
         for existing_resource in self._resources:

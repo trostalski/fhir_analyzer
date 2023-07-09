@@ -91,12 +91,13 @@ class Patsim:
             conditional_target_paths = {
                 "value": conditional_target_paths,
             }
-        self._feature_selector._add_single_feature(
+        self._feature_selector._add_feature(
             feature_name=name,
             feature_type=CATEGORICAL_STRING,
             target_resource_types=resource_types,
             target_paths=target_paths,
             conditional_target_paths=conditional_target_paths,
+            include_target_names=True,
         )
 
     def add_numerical_feature(
@@ -123,12 +124,13 @@ class Patsim:
         }
         if conditional_target_paths:
             conditional_target_paths["value"] = conditional_target_paths
-        self._feature_selector._add_single_feature(
+        self._feature_selector._add_feature(
             feature_name=name,
             feature_type=NUMERICAL,
             target_resource_types=resource_types,
             target_paths=target_paths,
             conditional_target_paths=conditional_target_paths,
+            include_target_names=True,
         )
 
     def add_coded_concept_feature(
@@ -182,12 +184,13 @@ class Patsim:
         conditional_target_paths = (
             conditional_target_paths if conditional_target_paths else None
         )
-        self._feature_selector._add_single_feature(
+        self._feature_selector._add_feature(
             feature_name=name,
             feature_type=CODED_CONCEPT,
             target_resource_types=resource_types,
             target_paths=target_paths,
             conditional_target_paths=conditional_target_paths,
+            include_target_names=True,
         )
 
     def add_coded_numerical_feature(
@@ -241,12 +244,13 @@ class Patsim:
         conditional_target_paths = (
             conditional_target_paths if conditional_target_paths else None
         )
-        self._feature_selector._add_single_feature(
+        self._feature_selector._add_feature(
             feature_name=name,
             feature_type=CODED_NUMERICAL,
             target_resource_types=resource_types,
             target_paths=target_paths,
             conditional_target_paths=conditional_target_paths,
+            include_target_names=True,
         )
 
     @property

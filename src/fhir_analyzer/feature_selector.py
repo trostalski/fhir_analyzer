@@ -17,23 +17,41 @@ def evaluate_cond_fns(resource: dict, fns: list[dict[Callable, Callable]]) -> st
 
 
 class FeatureSelector:
-    def __init__(self, fhirstore: Fhirstore):
+    def __init__(self, fhirstore: Fhirstore = None):
         self._feature_names: list[str] = []
         self._feature_types: dict[str, str] = {}
         self._patient_features: list[dict[str, list[str]]] = {}
-        self._fhirstore = fhirstore
+        self._fhirstore = fhirstore if fhirstore else Fhirstore()
 
     @property
     def feature_df(self):
         return pd.DataFrame(self._patient_features).T
 
-    def _add_single_feature(
+    def add_feature(
+        self,
+        name: str,
+        resource_types: list[str],
+        target_paths: list[str],
+        conditional_target_paths: list[dict[str, str]] = None,
+    ):
+        target_paths = {"value": target_paths}
+        self._add_feature(
+            feature_name=name,
+            feature_type="unknown",
+            target_resource_types=resource_types,
+            target_paths=target_paths,
+            conditional_target_paths=conditional_target_paths,
+            include_target_names=False,
+        )
+
+    def _add_feature(
         self,
         feature_name: str,
         feature_type: str,
         target_resource_types: list[str],
         target_paths: dict[str, list[str]],
         conditional_target_paths: dict[str, list[dict[str, str]]] = None,
+        include_target_names=False,
     ):
         if feature_name not in self._feature_names:
             self._add_feature_metadata(feature_name, feature_type)
@@ -62,6 +80,7 @@ class FeatureSelector:
             conditional_fns,
             feature_name,
             target_resource_types,
+            include_target_names,
         )
 
     def _add_feature_metadata(self, feature_name: str, feature_type: str):
@@ -76,6 +95,7 @@ class FeatureSelector:
         ],
         feature_name: str,
         target_resource_types: list[str],
+        include_target_names,
     ):
         for (
             patient_id,
@@ -88,7 +108,9 @@ class FeatureSelector:
                 if resource_type in patient_resources:
                     for resource in patient_resources[resource_type]:
                         target = self._get_target(resource, target_fns, conditional_fns)
-                        self._update_patient_features(patient_id, feature_name, target)
+                        self._update_patient_features(
+                            patient_id, feature_name, target, include_target_names
+                        )
 
     def _get_target(
         self,
@@ -135,6 +157,16 @@ class FeatureSelector:
                 return target
         return None
 
-    def _update_patient_features(self, patient_id: str, feature_name: str, target: Any):
-        if target:
+    def _update_patient_features(
+        self,
+        patient_id: str,
+        feature_name: str,
+        target: dict[str, Any],
+        include_target_names=False,
+    ):
+        if target and include_target_names:
             self._patient_features[patient_id][feature_name].append(target)
+        elif target and not include_target_names:
+            self._patient_features[patient_id][feature_name].append(
+                list(target.values())[0]
+            )
